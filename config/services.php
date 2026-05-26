@@ -18,6 +18,19 @@ return [
         'key' => env('POSTMARK_API_KEY'),
     ],
 
+    'meta' => [
+        'access_token' => env('META_ACCESS_TOKEN'),
+        'accounts' => [
+            ['id' => '185496109582193', 'name' => 'Liceu Brasil'],
+            ['id' => '689041216147072', 'name' => 'Colégio Itaquá (CONTINGÊNCIA)'],
+            ['id' => '2995123880781648', 'name' => 'FISK SUZANO'],
+            ['id' => '2168887503468328', 'name' => 'Liceu da Beleza Arujá'],
+            ['id' => '1116256633008968', 'name' => 'Colégio Itaquá'],
+            ['id' => '3542869715847463', 'name' => 'Colégio DÓ RÉ MI'],
+            ['id' => '3854176348214890', 'name' => 'Escola Pequeno Príncipe e Pequena Princesa'],
+        ],
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],
