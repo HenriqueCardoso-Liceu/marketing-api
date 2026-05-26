@@ -8,9 +8,7 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use MetaAdsService;
-
-// app/Jobs/SyncMetaAdsInsightsJob.php
+use App\Services\MetaAdsService;
 
 class SyncMetaAdsInsightsJob implements ShouldQueue
 {
