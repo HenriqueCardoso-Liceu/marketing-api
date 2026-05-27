@@ -12,4 +12,9 @@ Route::get('/leads', [LeadsController::class, 'index']);
 Route::post('/leads', [LeadsController::class, 'store']);
 
 // Rotas para interação com a tabela meta_ads_insights
-Route::apiResource('meta-ads-insights', MetaAdsInsightsController::class);
+Route::get('meta-ads-insights', [MetaAdsInsightsController::class, 'index']);
+Route::post('meta-ads-insights', [MetaAdsInsightsController::class, 'store']);
+Route::get('meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'show']);
+Route::put('meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'update']);
+Route::patch('meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'update']);
+Route::delete('meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'destroy']);
