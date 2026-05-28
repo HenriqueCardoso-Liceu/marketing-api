@@ -19,8 +19,30 @@ class MetaAdsInsightsController extends Controller
             $query->where('campaign_id', $request->campaign_id);
         }
 
+        if ($request->filled('campaign_name')) {
+            $campaignNames = $request->campaign_name;
+
+            if (!is_array($campaignNames)) {
+                $campaignNames = array_filter(array_map('trim', explode(',', $campaignNames)));
+            }
+
+            if (count($campaignNames) === 1) {
+                $query->where('campaign_name', $campaignNames[0]);
+            } else {
+                $query->whereIn('campaign_name', $campaignNames);
+            }
+        }
+
         if ($request->filled('date_start')) {
             $query->where('date_start', $request->date_start);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('date_start', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('date_start', '<=', $request->date_to);
         }
 
         return response()->json($query->orderBy('date_start', 'desc')->paginate(20));
