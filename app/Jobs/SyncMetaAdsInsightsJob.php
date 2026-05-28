@@ -25,11 +25,11 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
         $rows = $service->fetchInsights($this->account['id'], $this->since, $this->until);
 
         $records = collect($rows)->map(function ($row) {
-            $actions = collect($row['actions'] ?? []);
+            $actions = $row['actions'] ?? [];
 
             return [
                 'account_id'    => $this->account['id'],
-                'account_name'  => $this->account['name'], // <- novo
+                'account_name'  => $this->account['name'],
                 'campaign_id'   => $row['campaign_id'] ?? null,
                 'campaign_name' => $row['campaign_name'] ?? null,
                 'date_start'    => $row['date_start'],
@@ -40,9 +40,13 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
                 'ctr'           => $row['ctr'] ?? 0,
                 'cpm'           => $row['cpm'] ?? 0,
                 'cpc'           => $row['cpc'] ?? 0,
-                'link_clicks'   => $actions->firstWhere('action_type', 'link_click')['value'] ?? 0,
-                'leads'         => $actions->firstWhere('action_type', 'lead')['value'] ?? 0,
-                'purchases'     => $actions->firstWhere('action_type', 'purchase')['value'] ?? 0,
+                'link_clicks'   => $this->getActionValue($actions, 'link_click'),
+                'leads'         => $this->getLeads($actions),         // <- corrigido
+                'whatsapp'      => $this->getActionValue(
+                    $actions,    // <- novo
+                    'onsite_conversion.messaging_conversation_started_7d'
+                ),
+                'purchases'     => $this->getActionValue($actions, 'purchase'),
                 'synced_at'     => now(),
                 'created_at'    => now(),
                 'updated_at'    => now(),
@@ -64,11 +68,34 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
                     'cpc',
                     'link_clicks',
                     'leads',
+                    'whatsapp',   // <- novo
                     'purchases',
                     'synced_at',
-                    'updated_at'
+                    'updated_at',
                 ]
             );
         }
+    }
+
+    // ── Helpers de actions ────────────────────────────────────
+
+    private function getActionValue(array $actions, string $type): float
+    {
+        foreach ($actions as $action) {
+            if ($action['action_type'] === $type) {
+                return (float) $action['value'];
+            }
+        }
+        return 0;
+    }
+
+    private function getLeads(array $actions): float
+    {
+        $pixel    = $this->getActionValue($actions, 'offsite_conversion.fb_pixel_lead');
+        $form     = $this->getActionValue($actions, 'onsite_conversion.lead_grouped');
+        $workshop = $this->getActionValue($actions, 'offsite_conversion.custom.1258896832705415');
+
+        // Math.max evita dupla contagem nas campanhas Workshop
+        return max($pixel + $form, $workshop);
     }
 }
