@@ -27,6 +27,7 @@ class MetaAdsService
                 'time_increment' => 1,
                 'level' => $level,
                 'time_range' => json_encode(['since' => $since, 'until' => $until]),
+                'action_attribution_windows' => json_encode(['7d_click', '1d_view', '1d_ev']),
                 'limit' => 500,
                 'access_token' => config('services.meta.access_token'),
             ]);
