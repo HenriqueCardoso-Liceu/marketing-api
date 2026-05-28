@@ -91,12 +91,9 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
     {
         $pixel    = $this->getActionValue($actions, 'offsite_conversion.fb_pixel_lead');
         $form     = $this->getActionValue($actions, 'onsite_conversion.lead_grouped');
-        //$workshop = $this->getActionValue($actions, 'offsite_conversion.custom.1258896832705415');
+        $workshop = $this->getActionValue($actions, 'offsite_conversion.custom.1258896832705415');
 
         // Math.max evita dupla contagem nas campanhas Workshop
-        //return max($pixel + $form, $workshop);
-
-        // Workshop é uma conversão personalizada DENTRO do pixel, não somamos separadamente
-        return $pixel + $form;
+        return max($pixel + $form, $workshop);
     }
 }
