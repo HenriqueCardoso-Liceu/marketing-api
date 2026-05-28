@@ -42,10 +42,8 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
                 'cpc'           => $row['cpc'] ?? 0,
                 'link_clicks'   => $this->getActionValue($actions, 'link_click'),
                 'leads'         => $this->getLeads($actions),         // <- corrigido
-                'whatsapp'      => $this->getActionValue(
-                    $actions,    // <- novo
-                    'onsite_conversion.messaging_conversation_started_7d'
-                ),
+                'whatsapp'      => $this->getActionValue($actions,    // <- novo
+                                   'onsite_conversion.messaging_conversation_started_7d'),
                 'purchases'     => $this->getActionValue($actions, 'purchase'),
                 'synced_at'     => now(),
                 'created_at'    => now(),
@@ -93,9 +91,12 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
     {
         $pixel    = $this->getActionValue($actions, 'offsite_conversion.fb_pixel_lead');
         $form     = $this->getActionValue($actions, 'onsite_conversion.lead_grouped');
-        $workshop = $this->getActionValue($actions, 'offsite_conversion.custom.1258896832705415');
+        //$workshop = $this->getActionValue($actions, 'offsite_conversion.custom.1258896832705415');
 
         // Math.max evita dupla contagem nas campanhas Workshop
-        return max($pixel + $form, $workshop);
+        //return max($pixel + $form, $workshop);
+
+        // Workshop é uma conversão personalizada DENTRO do pixel, não somamos separadamente
+        return $pixel + $form;
     }
 }
