@@ -41,8 +41,8 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
                 'cpm'           => $row['cpm'] ?? 0,
                 'cpc'           => $row['cpc'] ?? 0,
                 'link_clicks'   => $this->getActionValue($actions, 'link_click'),
-                'leads'         => $this->getLeads($actions),         // <- corrigido
-                'whatsapp'      => $this->getActionValue($actions,    // <- novo
+                'leads'         => $this->getLeads($actions),
+                'whatsapp'      => $this->getActionValue($actions,    
                                    'onsite_conversion.messaging_conversation_started_7d'),
                 'purchases'     => $this->getActionValue($actions, 'purchase'),
                 'synced_at'     => now(),
@@ -80,8 +80,8 @@ class SyncMetaAdsInsightsJob implements ShouldQueue
     private function getActionValue(array $actions, string $type): float
     {
         foreach ($actions as $action) {
-            if ($action['action_type'] === $type) {
-                return (float) $action['value'];
+            if (isset($action['action_type'], $action['value']) && $action['action_type'] === $type) {
+                return is_numeric($action['value']) ? (float) $action['value'] : 0;
             }
         }
         return 0;

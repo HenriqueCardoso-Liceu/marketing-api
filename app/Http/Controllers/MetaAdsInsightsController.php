@@ -4,11 +4,21 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MetaAdsInsight;
+use Carbon\Carbon;
 
 class MetaAdsInsightsController extends Controller
 {
     public function index(Request $request)
     {
+        $request->validate([
+            'account_id' => 'nullable|string',
+            'campaign_id' => 'nullable|string',
+            'campaign_name' => 'nullable|string',
+            'date_start' => 'nullable|date',
+            'date_from' => 'nullable|date',
+            'date_to' => 'nullable|date',
+        ]);
+
         $query = MetaAdsInsight::query();
 
         if ($request->filled('account_id')) {
@@ -34,15 +44,15 @@ class MetaAdsInsightsController extends Controller
         }
 
         if ($request->filled('date_start')) {
-            $query->where('date_start', $request->date_start);
+            $query->whereDate('date_start', Carbon::parse($request->date_start)->toDateString());
         }
 
         if ($request->filled('date_from')) {
-            $query->where('date_start', '>=', $request->date_from);
+            $query->whereDate('date_start', '>=', Carbon::parse($request->date_from)->toDateString());
         }
 
         if ($request->filled('date_to')) {
-            $query->where('date_start', '<=', $request->date_to);
+            $query->whereDate('date_start', '<=', Carbon::parse($request->date_to)->toDateString());
         }
 
         return response()->json($query->orderBy('date_start', 'desc')->paginate(20));
