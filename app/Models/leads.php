@@ -23,5 +23,6 @@ class leads extends Model
         'utm_content',
         'referrer',
         'landing_page',
+        'reason_of_registration',
     ];
 }

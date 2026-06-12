@@ -26,6 +26,7 @@ class LeadsController extends Controller
             'utm_content' => 'nullable|string|max:255',
             'referrer' => 'nullable|string|max:255',
             'landing_page' => 'nullable|string|max:255',
+            'reason_of_registration' => 'nullable|string|max:255',
         ]);
 
         // Converte data de DD/MM/YYYY para YYYY-MM-DD
