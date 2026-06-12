@@ -13,7 +13,9 @@ class LeadsController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
+            'guardians_name' => 'nullable|string|max:255',
             'mobile_phone' => 'nullable|string|max:20',
+            'guardians_phone' => 'nullable|string|max:20',
             'email' => 'required|email|unique:leads,email',
             'city' => 'nullable|string|max:255',
             'date_of_birth' => 'nullable|date_format:d/m/Y',
