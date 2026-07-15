@@ -55,7 +55,7 @@ class MetaAdsInsightsController extends Controller
             $query->whereDate('date_start', '<=', Carbon::parse($request->date_to)->toDateString());
         }
 
-        return response()->json($query->orderBy('date_start', 'desc')->paginate(20));
+        return response()->json($query->orderBy('date_start', 'desc')->get());
     }
 
     public function show($id)
