@@ -34,6 +34,17 @@ class LeadsController extends Controller
             $validatedData['date_of_birth'] = \DateTime::createFromFormat('d/m/Y', $validatedData['date_of_birth'])->format('Y-m-d');
         }
 
+        $existingLead = leads::where('email', $validatedData['email'])->first();
+
+        if ($existingLead) {
+            $existingLead->fill($validatedData);
+            $existingLead->save();
+
+            return response()->json([
+                'message' => 'Lead updated successfully',
+                'lead' => $existingLead,
+            ], 200);
+        }
         $lead = leads::create($validatedData);
 
         return response()->json(['message' => 'Lead created successfully', 'lead' => $lead], 201);
