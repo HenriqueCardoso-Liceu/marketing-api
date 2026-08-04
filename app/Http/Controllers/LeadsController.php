@@ -16,7 +16,7 @@ class LeadsController extends Controller
             'guardians_name' => 'nullable|string|max:255',
             'mobile_phone' => 'nullable|string|max:20',
             'guardians_phone' => 'nullable|string|max:20',
-            'email' => 'required|email|unique:leads,email',
+            'email' => 'required|email',
             'city' => 'nullable|string|max:255',
             'date_of_birth' => 'nullable|date_format:d/m/Y',
             'utm_source' => 'nullable|string|max:255',
