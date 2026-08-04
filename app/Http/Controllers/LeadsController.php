@@ -45,6 +45,7 @@ class LeadsController extends Controller
                 'lead' => $existingLead,
             ], 200);
         }
+
         $lead = leads::create($validatedData);
 
         return response()->json(['message' => 'Lead created successfully', 'lead' => $lead], 201);
