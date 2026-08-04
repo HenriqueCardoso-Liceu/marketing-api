@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\RegistrationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\MetaAdsInsightsController;
@@ -10,6 +11,10 @@ Route::get('/health', function () {
 
 Route::get('/leads', [LeadsController::class, 'index']);
 Route::post('/leads', [LeadsController::class, 'store']);
+
+Route::post('/registrations', [RegistrationController::class, 'store']);
+Route::get('/registrations/{registration}', [RegistrationController::class, 'show']);
+Route::patch('/registrations/{registration}', [RegistrationController::class, 'update']);
 
 // Rotas para interação com a tabela meta_ads_insights
 Route::get('/meta-ads-insights', [MetaAdsInsightsController::class, 'index']);
