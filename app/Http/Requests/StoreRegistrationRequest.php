@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StoreRegistrationRequest extends FormRequest
 {
@@ -18,9 +19,19 @@ class StoreRegistrationRequest extends FormRequest
             'student_name' => 'nullable|string|max:150',
             'responsible_name' => 'nullable|string|max:150',
 
-            'mobile_phone' => ['required', 'string', 'regex:/^\d{10,11}$/'],
+            'mobile_phone' => [
+                'required',
+                'string',
+                'regex:/^\d{10,11}$/',
+                Rule::unique('registrations', 'mobile_phone'),
+            ],
 
-            'email' => 'nullable|email:rfc,dns|max:150',
+            'email' => [
+                'nullable',
+                'email:rfc,dns',
+                'max:150',
+                Rule::unique('registrations', 'email'),
+            ],
 
             'date_of_birth' => 'nullable|date_format:Y-m-d|before_or_equal:today',
 
@@ -51,6 +62,13 @@ class StoreRegistrationRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'mobile_phone.unique' => 'Já existe um cadastro com este telefone.',
+            'email.unique' => 'Já existe um cadastro com este e-mail.',
+        ];
+    }
 
 
     protected function prepareForValidation(): void
