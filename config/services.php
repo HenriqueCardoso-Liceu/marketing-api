@@ -29,6 +29,7 @@ return [
             ['id' => '3542869715847463', 'name' => 'Colégio DÓ RÉ MI'],
             ['id' => '3854176348214890', 'name' => 'Escola Pequeno Príncipe e Pequena Princesa'],
         ],
+        'verify_token' => env('META_VERIFY_TOKEN'),
     ],
 
     'resend' => [

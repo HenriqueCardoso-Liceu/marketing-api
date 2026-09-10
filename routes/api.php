@@ -4,6 +4,7 @@ use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\MetaAdsInsightsController;
+use App\Http\Controllers\MetaLeadWebhookController;
 
 Route::get('/health', function () {
     return dd('API is running');
@@ -23,3 +24,15 @@ Route::get('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::
 Route::put('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'update']);
 Route::patch('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'update']);
 Route::delete('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'destroy']);
+
+
+// Meta receptor
+Route::get('/webhooks/meta/leads', [
+    MetaLeadWebhookController::class,
+    'verify'
+]);
+
+Route::post('/webhooks/meta/leads', [
+    MetaLeadWebhookController::class,
+    'receive'
+]);
