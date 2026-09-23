@@ -3,6 +3,7 @@
 use App\Http\Controllers\RegistrationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LeadsController;
+use App\Http\Controllers\MatriculasController;
 use App\Http\Controllers\MetaAdsInsightsController;
 use App\Http\Controllers\MetaLeadWebhookController;
 
@@ -24,6 +25,10 @@ Route::get('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::
 Route::put('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'update']);
 Route::patch('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'update']);
 Route::delete('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsController::class, 'destroy']);
+
+
+// Rotas para interação com as tabelas de matriculas
+Route::post('/col-itaqua/registrations', [MatriculasController::class, 'storeColItaqua']);
 
 
 // Meta receptor
