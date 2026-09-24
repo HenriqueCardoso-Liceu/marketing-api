@@ -13,5 +13,12 @@ class ColItaquaMatriculas extends Model
         'responsible_name',
         'mobile_phone',
         'interest',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content',
+        'referrer',
+        'landing_page',
     ];
 }
