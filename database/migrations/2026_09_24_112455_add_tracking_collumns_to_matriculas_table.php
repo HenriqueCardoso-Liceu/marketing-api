@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('utm_content')->nullable();
             $table->string('referrer')->nullable();
             $table->string('landing_page')->nullable();
+            $table->timestamps(); // Adiciona as colunas created_at e updated_at
 
         });
     }
@@ -36,6 +37,7 @@ return new class extends Migration {
             $table->dropColumn('utm_content');
             $table->dropColumn('referrer');
             $table->dropColumn('landing_page');
+            $table->dropTimestamps(); // Remove as colunas created_at e updated_at
         });
     }
 };
