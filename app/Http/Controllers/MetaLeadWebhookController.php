@@ -13,20 +13,15 @@ class MetaLeadWebhookController extends Controller
      */
     public function verify(Request $request)
     {
-        $mode = $request->query('hub_mode');
-        $token = $request->query('hub_verify_token');
-        $challenge = $request->query('hub_challenge');
+        $mode = $request->query('hub_mode') ?? $request->query('hub.mode');
+        $token = $request->query('hub_verify_token') ?? $request->query('hub.verify_token');
+        $challenge = $request->query('hub_challenge') ?? $request->query('hub.challenge');
 
-        if (
-            $mode === 'subscribe' &&
-            $token === config('services.meta.verify_token')
-        ) {
-            return response($challenge, 200);
+        if ($mode === 'subscribe' && $token === config('services.meta.verify_token')) {
+            return response($challenge, 200)->header('Content-Type', 'text/plain');
         }
 
-        Log::warning('Meta Webhook: falha na verificação.', [
-            'mode' => $mode,
-        ]);
+        Log::warning('Meta Webhook: falha na verificação.', ['mode' => $mode]);
 
         return response('Forbidden', 403);
     }
@@ -36,6 +31,15 @@ class MetaLeadWebhookController extends Controller
      */
     public function receive(Request $request)
     {
+        $signature = $request->header('X-Hub-Signature-256');
+        $expected = 'sha256=' . hash_hmac('sha256', $request->getContent(), config('services.meta.app_secret'));
+
+        if (!$signature || !hash_equals($expected, $signature)) {
+            Log::warning('Meta Webhook: assinatura inválida.');
+            return response('Forbidden', 403);
+        }
+        
+
         $payload = $request->all();
 
         Log::info('Meta Lead Webhook recebido.', [

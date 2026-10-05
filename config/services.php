@@ -30,6 +30,8 @@ return [
             ['id' => '3854176348214890', 'name' => 'Escola Pequeno Príncipe e Pequena Princesa'],
         ],
         'verify_token' => env('META_VERIFY_TOKEN'),
+        'app_secret' => env('META_APP_SECRET'),
+        'page_token' => env('META_PAGE_ACCESS_TOKEN'),
     ],
 
     'resend' => [
