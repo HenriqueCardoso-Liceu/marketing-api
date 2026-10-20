@@ -30,6 +30,7 @@ Route::delete('/meta-ads-insights/{meta_ads_insight}', [MetaAdsInsightsControlle
 // Rotas para interação com as tabelas de matriculas
 Route::post('/col-itaqua/registrations', [MatriculasController::class, 'storeColItaqua']);
 Route::post('/col-doremi/registrations', [MatriculasController::class, 'storeColDoremi']);
+Route::post('/col-pequeno-principe/registrations', [MatriculasController::class, 'storeColPequenoPrincipe']);
 
 
 // Meta receptor
