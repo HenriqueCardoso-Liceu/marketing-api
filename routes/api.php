@@ -27,6 +27,7 @@ Route::patch('/registrations/{registration}', [RegistrationController::class, 'u
 Route::post('/col-itaqua/registrations', [MatriculasController::class, 'storeColItaqua']);
 Route::post('/col-doremi/registrations', [MatriculasController::class, 'storeColDoremi']);
 Route::post('/col-pequeno-principe/registrations', [MatriculasController::class, 'storeColPequenoPrincipe']);
+Route::post('/col-liceu-suzano/registrations', [MatriculasController::class, 'storeColLiceuSuzano']);
 
 // Meta receptor (POST valida X-Hub-Signature-256 no controller)
 Route::get('/webhooks/meta/leads', [MetaLeadWebhookController::class, 'verify']);
