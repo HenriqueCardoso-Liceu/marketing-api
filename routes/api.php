@@ -6,6 +6,7 @@ use App\Http\Controllers\LeadsController;
 use App\Http\Controllers\MatriculasController;
 use App\Http\Controllers\MetaAdsInsightsController;
 use App\Http\Controllers\MetaLeadWebhookController;
+use App\Http\Controllers\WhatsAppCtwaWebhookController;
 use App\Http\Middleware\ApiKeyGuard;
 
 Route::get('/health', function () {
@@ -36,6 +37,14 @@ Route::middleware('throttle:public-forms')->group(function () {
 Route::middleware('throttle:webhooks')->group(function () {
     Route::get('/webhooks/meta/leads', [MetaLeadWebhookController::class, 'verify']);
     Route::post('/webhooks/meta/leads', [MetaLeadWebhookController::class, 'receive']);
+});
+
+// WhatsApp Cloud API — captura do referral de anúncio click-to-WhatsApp (CTWA).
+// Limiter próprio: recebe TODAS as mensagens e status das WABAs inscritas (inclusive
+// dos disparos da SellFlux), em volume bem maior que o webhook de Lead Ads.
+Route::middleware('throttle:whatsapp-webhooks')->group(function () {
+    Route::get('/webhooks/meta/whatsapp', [WhatsAppCtwaWebhookController::class, 'verify']);
+    Route::post('/webhooks/meta/whatsapp', [WhatsAppCtwaWebhookController::class, 'receive']);
 });
 
 /*
