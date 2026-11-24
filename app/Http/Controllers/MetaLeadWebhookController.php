@@ -17,7 +17,17 @@ class MetaLeadWebhookController extends Controller
         $token = $request->query('hub_verify_token') ?? $request->query('hub.verify_token');
         $challenge = $request->query('hub_challenge') ?? $request->query('hub.challenge');
 
-        if ($mode === 'subscribe' && $token === config('services.meta.verify_token')) {
+        $expectedToken = (string) config('services.meta.verify_token');
+
+        // Falha fechada: sem META_VERIFY_TOKEN configurado, nenhuma verificação passa.
+        if (
+            $mode === 'subscribe'
+            && $expectedToken !== ''
+            && is_string($token)
+            && hash_equals($expectedToken, $token)
+            && is_string($challenge)
+            && ctype_digit($challenge)
+        ) {
             return response($challenge, 200)->header('Content-Type', 'text/plain');
         }
 
@@ -31,19 +41,26 @@ class MetaLeadWebhookController extends Controller
      */
     public function receive(Request $request)
     {
-        $signature = $request->header('X-Hub-Signature-256');
-        $expected = 'sha256=' . hash_hmac('sha256', $request->getContent(), config('services.meta.app_secret'));
+        $secret = (string) config('services.meta.app_secret');
 
-        if (!$signature || !hash_equals($expected, $signature)) {
-            Log::warning('Meta Webhook: assinatura inválida.');
+        // Falha fechada: sem META_APP_SECRET o HMAC seria calculado com chave vazia
+        // e qualquer um conseguiria forjar a assinatura.
+        if ($secret === '') {
+            Log::error('Meta Webhook: META_APP_SECRET não configurado; requisição recusada.');
             return response('Forbidden', 403);
         }
-        
 
-        $payload = $request->all();
+        $signature = (string) $request->header('X-Hub-Signature-256');
+        $expected = 'sha256=' . hash_hmac('sha256', $request->getContent(), $secret);
 
+        if ($signature === '' || !hash_equals($expected, $signature)) {
+            Log::warning('Meta Webhook: assinatura inválida.', ['ip' => $request->ip()]);
+            return response('Forbidden', 403);
+        }
+
+        // Não grava o payload inteiro no log; só os IDs (abaixo).
         Log::info('Meta Lead Webhook recebido.', [
-            'payload' => $payload,
+            'entries' => count((array) $request->input('entry', [])),
         ]);
 
         /*
@@ -96,4 +113,3 @@ class MetaLeadWebhookController extends Controller
         ], 200);
     }
 }
-;

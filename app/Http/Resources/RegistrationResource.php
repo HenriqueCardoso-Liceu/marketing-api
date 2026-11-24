@@ -18,7 +18,7 @@ class RegistrationResource extends JsonResource
             'id' => $this->id,
             'student_name' => $this->student_name,
             'responsible_name' => $this->responsible_name,
-            'responsible_first_name' => explode(' ', $this->responsible_name)[0],
+            'responsible_first_name' => explode(' ', (string) $this->responsible_name)[0],
 
             'education_level' => $this->education_level,
             'current_school' => $this->current_school,

@@ -54,7 +54,8 @@ return [
     // Chave para rotas administrativas (App\Http\Middleware\ApiKeyGuard) — incidente 10/11/2026
     'internal_api' => [
         'key' => env('INTERNAL_API_KEY'),
-        'enforce' => (bool) env('INTERNAL_API_KEY_ENFORCE', false),
+        // Padrão "true" (falha fechada): se a variável sumir do .env, as rotas continuam bloqueadas.
+        'enforce' => (bool) env('INTERNAL_API_KEY_ENFORCE', true),
     ],
 
 ];
