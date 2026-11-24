@@ -34,6 +34,12 @@ return [
         'page_token' => env('META_PAGE_ACCESS_TOKEN'),
     ],
 
+    // App Meta de captura CTWA ("Rede Liceu") — separado do app do Lead Ads.
+    'ctwa' => [
+        'app_secret' => env('CTWA_APP_SECRET'),
+        'verify_token' => env('CTWA_VERIFY_TOKEN'),
+    ],
+
     'resend' => [
         'key' => env('RESEND_API_KEY'),
     ],

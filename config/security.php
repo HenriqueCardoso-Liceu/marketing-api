@@ -13,6 +13,7 @@ return [
         'public_forms_per_hour' => (int) env('RATE_LIMIT_PUBLIC_FORMS_PER_HOUR', 60),
         'internal_per_minute' => (int) env('RATE_LIMIT_INTERNAL_PER_MINUTE', 120),
         'webhooks_per_minute' => (int) env('RATE_LIMIT_WEBHOOKS_PER_MINUTE', 300),
+        'whatsapp_webhooks_per_minute' => (int) env('RATE_LIMIT_WHATSAPP_WEBHOOKS_PER_MINUTE', 3000),
     ],
 
     // GET/PATCH /api/registrations/{id} são públicos (formulário em etapas).

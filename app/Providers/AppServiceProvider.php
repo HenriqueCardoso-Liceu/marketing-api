@@ -79,5 +79,10 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('webhooks', function (Request $request) {
             return Limit::perMinute(config('security.rate_limits.webhooks_per_minute'))->by($request->ip());
         });
+
+        // Webhook do WhatsApp (CTWA): poucos IPs do Meta entregando todo o tráfego das WABAs.
+        RateLimiter::for('whatsapp-webhooks', function (Request $request) {
+            return Limit::perMinute(config('security.rate_limits.whatsapp_webhooks_per_minute'))->by($request->ip());
+        });
     }
 }
