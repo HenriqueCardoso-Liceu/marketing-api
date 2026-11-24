@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         //
         Schema::create('matriculas2027-col-doremi', function (Blueprint $table) {
-            $table->id()->primary();
+            $table->id();
             $table->string('responsible_name', 150)->nullable();
             $table->string('mobile_phone', 25)->nullable();
             $table->string('interest', 150)->nullable();

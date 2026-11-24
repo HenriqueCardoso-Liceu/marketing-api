@@ -14,32 +14,37 @@ Route::get('/health', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Rotas PÚBLICAS (landing pages / formulários / webhook assinado da Meta)
+| Rotas PÚBLICAS (landing pages / formulários) — com rate limit por IP
 |--------------------------------------------------------------------------
 */
-Route::post('/leads', [LeadsController::class, 'store']);
+Route::middleware('throttle:public-forms')->group(function () {
+    Route::post('/leads', [LeadsController::class, 'store']);
 
-Route::post('/registrations', [RegistrationController::class, 'store']);
-// TODO (fase 2): usam ID sequencial; trocar por UUID/token antes de exigir chave
-Route::get('/registrations/{registration}', [RegistrationController::class, 'show']);
-Route::patch('/registrations/{registration}', [RegistrationController::class, 'update']);
+    Route::post('/registrations', [RegistrationController::class, 'store']);
+    // Formulário em etapas: só funcionam dentro da janela security.registration_edit_window_minutes
+    // após a criação. O ID é ULID (não sequencial).
+    Route::get('/registrations/{registration}', [RegistrationController::class, 'show']);
+    Route::patch('/registrations/{registration}', [RegistrationController::class, 'update']);
 
-Route::post('/col-itaqua/registrations', [MatriculasController::class, 'storeColItaqua']);
-Route::post('/col-doremi/registrations', [MatriculasController::class, 'storeColDoremi']);
-Route::post('/col-pequeno-principe/registrations', [MatriculasController::class, 'storeColPequenoPrincipe']);
-Route::post('/col-liceu-suzano/registrations', [MatriculasController::class, 'storeColLiceuSuzano']);
+    Route::post('/col-itaqua/registrations', [MatriculasController::class, 'storeColItaqua']);
+    Route::post('/col-doremi/registrations', [MatriculasController::class, 'storeColDoremi']);
+    Route::post('/col-pequeno-principe/registrations', [MatriculasController::class, 'storeColPequenoPrincipe']);
+    Route::post('/col-liceu-suzano/registrations', [MatriculasController::class, 'storeColLiceuSuzano']);
+});
 
 // Meta receptor (POST valida X-Hub-Signature-256 no controller)
-Route::get('/webhooks/meta/leads', [MetaLeadWebhookController::class, 'verify']);
-Route::post('/webhooks/meta/leads', [MetaLeadWebhookController::class, 'receive']);
+Route::middleware('throttle:webhooks')->group(function () {
+    Route::get('/webhooks/meta/leads', [MetaLeadWebhookController::class, 'verify']);
+    Route::post('/webhooks/meta/leads', [MetaLeadWebhookController::class, 'receive']);
+});
 
 /*
 |--------------------------------------------------------------------------
 | Rotas INTERNAS — exigem chave (X-Api-Key ou Bearer)
-| Fase 1: INTERNAL_API_KEY_ENFORCE=false só registra no log quem chama sem chave.
+| INTERNAL_API_KEY_ENFORCE (padrão true) bloqueia com 401 quem não enviar a chave.
 |--------------------------------------------------------------------------
 */
-Route::middleware(ApiKeyGuard::class)->group(function () {
+Route::middleware(['throttle:internal', ApiKeyGuard::class])->group(function () {
     // Lista TODOS os leads (dados pessoais)
     Route::get('/leads', [LeadsController::class, 'index']);
 

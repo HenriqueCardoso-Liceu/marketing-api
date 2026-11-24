@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Protege rotas administrativas com uma chave de API (header X-Api-Key ou Authorization: Bearer).
  *
- * Fase 1 (INTERNAL_API_KEY_ENFORCE=false): NÃO bloqueia; só registra no log quem chamou sem a chave,
- * para descobrir todos os consumidores antes de ativar o bloqueio.
- * Fase 2 (INTERNAL_API_KEY_ENFORCE=true): responde 401 para quem não enviar a chave correta.
+ * INTERNAL_API_KEY_ENFORCE=true (padrão): responde 401 para quem não enviar a chave correta.
+ * INTERNAL_API_KEY_ENFORCE=false: só registra no log (modo de descoberta; não usar em produção).
+ * Sem INTERNAL_API_KEY configurada, nenhuma chave é válida (falha fechada).
  */
 class ApiKeyGuard
 {

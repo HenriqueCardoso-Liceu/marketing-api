@@ -37,18 +37,21 @@ class LeadsController extends Controller
         $existingLead = leads::where('email', $validatedData['email'])->first();
 
         if ($existingLead) {
-            $existingLead->fill($validatedData);
+            // Rota pública: quem envia o formulário não prova ser o dono do e-mail.
+            // Só completa campos vazios — nunca sobrescreve dados já gravados.
+            foreach ($validatedData as $field => $value) {
+                if (blank($existingLead->getAttribute($field)) && !blank($value)) {
+                    $existingLead->setAttribute($field, $value);
+                }
+            }
             $existingLead->save();
-
-            return response()->json([
-                'message' => 'Lead updated successfully',
-                'lead' => $existingLead,
-            ], 200);
+        } else {
+            leads::create($validatedData);
         }
 
-        $lead = leads::create($validatedData);
-
-        return response()->json(['message' => 'Lead created successfully', 'lead' => $lead], 201);
+        // Mesma resposta para lead novo ou existente, e sem devolver dados gravados:
+        // evita vazar dados pessoais e revelar se um e-mail já está na base.
+        return response()->json(['message' => 'Lead received successfully'], 201);
     }
 
     public function index()

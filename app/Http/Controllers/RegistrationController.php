@@ -11,6 +11,7 @@ use App\Http\Requests\UpdateRegistrationRequest;
 use App\Http\Resources\RegistrationResource;
 use App\Models\Registration;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class RegistrationController extends Controller
 {
@@ -33,11 +34,7 @@ class RegistrationController extends Controller
                 'errors' => $e->errors(),
             ], 409);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An unexpected error occurred',
-                'exception' => $e->getMessage()
-            ], 500);
+            return $this->unexpectedError($e);
         }
     }
 
@@ -49,11 +46,7 @@ class RegistrationController extends Controller
                 'data' => RegistrationResource::make($registration)
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An unexpected error occurred',
-                'exception' => $e->getMessage()
-            ], 500);
+            return $this->unexpectedError($e);
         }
     }
 
@@ -67,11 +60,20 @@ class RegistrationController extends Controller
                 'data' => RegistrationResource::make($registration)
             ], 201);
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'An unexpected error occurred',
-                'exception' => $e->getMessage()
-            ], 500);
+            return $this->unexpectedError($e);
         }
+    }
+
+    /**
+     * Detalhes da exceção ficam só no log; o cliente recebe mensagem genérica.
+     */
+    private function unexpectedError(\Throwable $e): JsonResponse
+    {
+        Log::error('RegistrationController: erro inesperado', ['exception' => $e]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'An unexpected error occurred',
+        ], 500);
     }
 }
