@@ -48,6 +48,30 @@ it('responde igual para lead novo e existente', function () {
         ->and($novo->json())->toBe($repetido->json());
 });
 
+it('aceita lead sem e-mail quando ha celular', function () {
+    $this->postJson('/api/leads', ['name' => 'Sem Email', 'mobile_phone' => '11977776666'])
+        ->assertStatus(201);
+
+    expect(leads::where('mobile_phone', '11977776666')->first()->email)->toBeNull();
+});
+
+it('deduplica lead sem e-mail pelo celular sem sobrescrever', function () {
+    $this->postJson('/api/leads', ['name' => 'Original', 'mobile_phone' => '11977776666'])->assertStatus(201);
+    $this->postJson('/api/leads', ['name' => 'Outro', 'mobile_phone' => '11977776666', 'city' => 'Suzano'])
+        ->assertStatus(201);
+
+    $leads = leads::where('mobile_phone', '11977776666')->get();
+    expect($leads)->toHaveCount(1)
+        ->and($leads->first()->name)->toBe('Original')
+        ->and($leads->first()->city)->toBe('Suzano');
+});
+
+it('exige e-mail ou celular no lead', function () {
+    $this->postJson('/api/leads', ['name' => 'Sem Contato'])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['email']);
+});
+
 // ── Rotas internas ─────────────────────────────────────────────────
 
 it('bloqueia GET /api/leads sem chave', function () {

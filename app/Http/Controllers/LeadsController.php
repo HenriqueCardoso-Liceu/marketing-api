@@ -16,7 +16,8 @@ class LeadsController extends Controller
             'guardians_name' => 'nullable|string|max:255',
             'mobile_phone' => 'nullable|string|max:20',
             'guardians_phone' => 'nullable|string|max:20',
-            'email' => 'required|email',
+            // E-mail opcional, mas o lead precisa de ao menos um contato.
+            'email' => 'nullable|email|required_without:mobile_phone',
             'city' => 'nullable|string|max:255',
             'date_of_birth' => 'nullable|date_format:d/m/Y',
             'utm_source' => 'nullable|string|max:255',
@@ -34,7 +35,13 @@ class LeadsController extends Controller
             $validatedData['date_of_birth'] = \DateTime::createFromFormat('d/m/Y', $validatedData['date_of_birth'])->format('Y-m-d');
         }
 
-        $existingLead = leads::where('email', $validatedData['email'])->first();
+        // Deduplica pelo e-mail; sem e-mail, pelo celular.
+        if (!empty($validatedData['email'])) {
+            $existingLead = leads::where('email', $validatedData['email'])->first();
+        } else {
+            $validatedData['email'] = null;
+            $existingLead = leads::where('mobile_phone', $validatedData['mobile_phone'])->first();
+        }
 
         if ($existingLead) {
             // Rota pública: quem envia o formulário não prova ser o dono do e-mail.
